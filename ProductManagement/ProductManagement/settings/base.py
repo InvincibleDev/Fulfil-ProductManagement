@@ -112,6 +112,7 @@ CELERY_ACCEPT_CONTENT = ['application/json', 'pickle', 'json', 'msgpack', 'yaml'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Kolkata'
+CELERY_TASK_TRACK_STARTED = True
 
 
 # Internationalization

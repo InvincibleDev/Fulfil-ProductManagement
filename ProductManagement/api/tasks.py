@@ -1,16 +1,8 @@
-from celery import shared_task
+from celery import shared_task, current_task
 import json, requests
 from celery.utils.log import get_task_logger
-from api.models import WebhookLog, Webhook
-
-logger = get_task_logger(__name__)
-
-@shared_task
-def add_num(x, y):
-    for i in range(1,100000):
-        if(i == 1000):
-            logger.info("done done done ")
-    return x+y
+from api.models import WebhookLog, Webhook, Product
+from django.db import connection
 
 @shared_task
 def send_webhook(event, product):
@@ -18,7 +10,6 @@ def send_webhook(event, product):
             "Event" : event,
             "product" : product
     }
-    print(data)
 
     webhooks = Webhook.objects.filter(event = event)
     for webhook in webhooks:
@@ -40,3 +31,14 @@ def send_webhook(event, product):
             )
 
     return
+
+@shared_task
+def delete_all_products():
+    products = Product.objects.all()
+    total = products.count()
+    count = 0
+    for product in products:
+        product.delete()
+        count += 1
+        current_task.update_state(state='PROGRESS', meta={'done': count, 'total': total})
+    return "success"

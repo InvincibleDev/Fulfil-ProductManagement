@@ -9,8 +9,6 @@ from rest_framework import filters
 from api.models import Product, Webhook, WebhookLog
 from api.serializers import ProductSerializer,WebhookSerializer
 
-from.tasks import add_num
-
 class ProductViewset(viewsets.ModelViewSet):
     # TODO: Add Class Description
     """
