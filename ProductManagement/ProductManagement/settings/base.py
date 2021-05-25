@@ -1,7 +1,6 @@
+import os
 from pathlib import Path
 from redis import Redis
-from celery.schedules import crontab
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,6 +16,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'django_filters',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ProductManagement.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -57,13 +65,15 @@ WSGI_APPLICATION = 'ProductManagement.wsgi.application'
 DATABASES = {
       'default': {
           'ENGINE': 'django.db.backends.postgresql_psycopg2',
-          'NAME': '<db_name>',
-          'USER': '<db_user>',
-          'PASSWORD': '<db_pass>',
+          'NAME': os.environ.get('DB_NAME'),
+          'USER': os.environ.get('DB_USER'),
+          'PASSWORD': os.environ.get('DB_PASSWORD'),
           'HOST': 'localhost',
           'PORT': '5432',
       }
  }
+
+
 
 
 # Password validation
@@ -98,16 +108,11 @@ print('connected to redis "{}"'.format(REDIS_HOST))
 #Celery Settings
 BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_ACCEPT_CONTENT = ['application/json', 'pickle', 'json', 'msgpack', 'yaml']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Kolkata'
-CELERY_BEAT_SCHEDULE = {
-    "sample_task": {
-        "task": "api.tasks.getBhavCopy",
-        "schedule": crontab(minute="*/1"),
-    },
-}
+CELERY_TASK_TRACK_STARTED = True
 
 
 # Internationalization
@@ -128,6 +133,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
