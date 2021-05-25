@@ -10,9 +10,10 @@ from api.models import Product, Webhook, WebhookLog
 from api.serializers import ProductSerializer,WebhookSerializer
 
 class ProductViewset(viewsets.ModelViewSet):
-    # TODO: Add Class Description
     """
-
+    A Model Viewset to handle all CRUD operations on the 'Product Model'.
+    It also has a LimitOffsetPagination that processess 100 Products at a time.
+    Filter and Search done using djagno filter_backends.
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -22,5 +23,8 @@ class ProductViewset(viewsets.ModelViewSet):
     filterset_fields = ['is_active']
 
 class WebhookViewset(viewsets.ModelViewSet):
+    """
+    A Model Viewset to handle all CRUD operations on the 'Webhook Model'.
+    """
     queryset = Webhook.objects.all()
     serializer_class = WebhookSerializer

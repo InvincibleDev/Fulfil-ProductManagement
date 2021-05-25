@@ -13,6 +13,7 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ('product_sku', 'product_name', 'product_description', 'is_active')
 
+    # Overiding create method to send Webhooks upon product creation
     def create(self, validated_data):
         event = "PRODUCT_CREATE_EVENT"
         product_sku = validated_data.get('product_sku', "")
@@ -33,6 +34,7 @@ class ProductSerializer(serializers.ModelSerializer):
         task = send_webhook.delay(event, product = data)
         return product
 
+    # Overiding update method to send Webhooks upon product updation
     def update(self, instance, validated_data):
         event = "PRODUCT_UPDATE_EVENT"
 
@@ -52,6 +54,9 @@ class ProductSerializer(serializers.ModelSerializer):
         return instance
 
 class WebhookSerializer(serializers.ModelSerializer):
+    """
+    Webhook Serializer :: Serializer for Webhook Model
+    """
     class Meta:
         model = Webhook
         fields = ('id','event','target_url')

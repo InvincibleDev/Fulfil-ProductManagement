@@ -1,11 +1,13 @@
 from django.db import models
 from django.utils import timezone
 
+# Choices for Webhook Events
 EVENT_CHOICE=(
     ("PRODUCT_CREATE_EVENT", "PRODUCT_CREATE_EVENT"),
     ("PRODUCT_UPDATE_EVENT", "PRODUCT_UPDATE_EVENT"),
 )
 
+# Choices for Webhook status
 WEBHOOK_STATUS=(
     ("SUCCESS", "SUCCESS"),
     ("FAILURE", "FAILURE")
