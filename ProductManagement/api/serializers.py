@@ -15,7 +15,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         event = "PRODUCT_CREATE_EVENT"
-        product, created = Product.objects.update_or_create(product_sku = validated_data.product_sku,defaults={"product_name":validated_data.product_name, "product_description":validated_data.product_description,"is_active":validated_data.is_active})
+        product_sku = validated_data.get('product_sku', "")
+        product_name = validated_data.get('product_name', "")
+        product_description = validated_data.get('product_description', "")
+        is_active = validated_data.get('is_active', True)
+        product, created = Product.objects.update_or_create(product_sku = product_sku,defaults={"product_name":product_name, "product_description":product_description,"is_active":is_active})
 
         if not created:
             event = "PRODUCT_UPDATE_EVENT"
@@ -27,7 +31,6 @@ class ProductSerializer(serializers.ModelSerializer):
                 "is_active":product.is_active,
         }
         task = send_webhook.delay(event, product = data)
-        print(task.id)
         return product
 
     def update(self, instance, validated_data):
